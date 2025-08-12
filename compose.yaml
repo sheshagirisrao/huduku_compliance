@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: bulwark-ai
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: a5r7vTzLNR2e09zxzjNItTyl
