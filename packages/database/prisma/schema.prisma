@@ -24,19 +24,19 @@ model User {
     id                 String       @id @default(cuid())
     name               String
     email              String
-    emailVerified      Boolean
+    emailVerified      Boolean      @map("email_verified")
     image              String?
-    createdAt          DateTime
-    updatedAt          DateTime
+    createdAt          DateTime     @map("created_at")
+    updatedAt          DateTime     @map("updated_at")
     username           String?
     role               String?
     banned             Boolean?
-    banReason          String?
-    banExpires         DateTime?
-    onboardingComplete Boolean      @default(false)
-    paymentsCustomerId String?
+    banReason          String?      @map("ban_reason")
+    banExpires         DateTime?    @map("ban_expires")
+    onboardingComplete Boolean      @default(false) @map("onboarding_complete")
+    paymentsCustomerId String?      @map("payments_customer_id")
     locale             String?
-    twoFactorEnabled   Boolean?
+    twoFactorEnabled   Boolean?     @map("two_factor_enabled")
     sessions           Session[]
     accounts           Account[]
     passkeys           Passkey[]
@@ -53,19 +53,19 @@ model User {
 
 model Session {
     id        String   @id @default(cuid())
-    expiresAt DateTime
-    ipAddress String?
-    userAgent String?
-    userId    String
+    expiresAt DateTime @map("expires_at")
+    ipAddress String?  @map("ip_address")
+    userAgent String?  @map("user_agent")
+    userId    String   @map("user_id")
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    impersonatedBy String?
+    impersonatedBy String? @map("impersonated_by")
 
-    activeOrganizationId String?
+    activeOrganizationId String? @map("active_organization_id")
 
     token     String
-    createdAt DateTime
-    updatedAt DateTime
+    createdAt DateTime @map("created_at")
+    updatedAt DateTime @map("updated_at")
 
     @@unique([token])
     @@map("session")
@@ -73,21 +73,21 @@ model Session {
 
 model Account {
     id           String    @id @default(cuid())
-    accountId    String
-    providerId   String
-    userId       String
+    accountId    String    @map("account_id")
+    providerId   String    @map("provider_id")
+    userId       String    @map("user_id")
     user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    accessToken  String?   @db.Text
-    refreshToken String?   @db.Text
-    idToken      String?   @db.Text
-    expiresAt    DateTime?
+    accessToken  String?   @map("access_token") @db.Text
+    refreshToken String?   @map("refresh_token") @db.Text
+    idToken      String?   @map("id_token") @db.Text
+    expiresAt    DateTime? @map("expires_at")
     password     String?
 
-    accessTokenExpiresAt  DateTime?
-    refreshTokenExpiresAt DateTime?
+    accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+    refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
     scope                 String?
-    createdAt             DateTime
-    updatedAt             DateTime
+    createdAt             DateTime  @map("created_at")
+    updatedAt             DateTime  @map("updated_at")
 
     @@map("account")
 }
@@ -96,10 +96,10 @@ model Verification {
     id         String   @id @default(cuid())
     identifier String
     value      String   @db.Text
-    expiresAt  DateTime
+    expiresAt  DateTime @map("expires_at")
 
-    createdAt DateTime?
-    updatedAt DateTime?
+    createdAt DateTime? @map("created_at")
+    updatedAt DateTime? @map("updated_at")
 
     @@map("verification")
 }
@@ -107,15 +107,15 @@ model Verification {
 model Passkey {
     id           String    @id @default(cuid())
     name         String?
-    publicKey    String
-    userId       String
+    publicKey    String    @map("public_key")
+    userId       String    @map("user_id")
     user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    credentialID String
+    credentialID String    @map("credential_id")
     counter      Int
-    deviceType   String
-    backedUp     Boolean
+    deviceType   String    @map("device_type")
+    backedUp     Boolean   @map("backed_up")
     transports   String?
-    createdAt    DateTime?
+    createdAt    DateTime? @map("created_at")
 
     @@map("passkey")
 }
@@ -123,11 +123,11 @@ model Passkey {
 model TwoFactor {
     id          String @id @default(cuid())
     secret      String
-    backupCodes String
-    userId      String
+    backupCodes String @map("backup_codes")
+    userId      String @map("user_id")
     user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@map("twoFactor")
+    @@map("two_factor")
 }
 
 model Organization {
@@ -135,9 +135,9 @@ model Organization {
     name               String
     slug               String?
     logo               String?
-    createdAt          DateTime
+    createdAt          DateTime     @map("created_at")
     metadata           String?
-    paymentsCustomerId String?
+    paymentsCustomerId String?      @map("payments_customer_id")
     members            Member[]
     invitations        Invitation[]
     purchases          Purchase[]
@@ -149,12 +149,12 @@ model Organization {
 
 model Member {
     id             String       @id @default(cuid())
-    organizationId String
+    organizationId String       @map("organization_id")
     organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    userId         String
+    userId         String       @map("user_id")
     user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     role           String
-    createdAt      DateTime
+    createdAt      DateTime     @map("created_at")
 
     @@unique([organizationId, userId])
     @@map("member")
@@ -162,13 +162,13 @@ model Member {
 
 model Invitation {
     id             String       @id @default(cuid())
-    organizationId String
+    organizationId String       @map("organization_id")
     organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     email          String
     role           String?
     status         String
-    expiresAt      DateTime
-    inviterId      String
+    expiresAt      DateTime     @map("expires_at")
+    inviterId      String       @map("inviter_id")
     user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
     @@map("invitation")
@@ -182,16 +182,16 @@ enum PurchaseType {
 model Purchase {
     id             String        @id @default(cuid())
     organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    organizationId String?
+    organizationId String?       @map("organization_id")
     user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId         String?
+    userId         String?       @map("user_id")
     type           PurchaseType
-    customerId     String
-    subscriptionId String?       @unique
-    productId      String
+    customerId     String        @map("customer_id")
+    subscriptionId String?       @unique @map("subscription_id")
+    productId      String        @map("product_id")
     status         String?
-    createdAt      DateTime      @default(now())
-    updatedAt      DateTime      @updatedAt
+    createdAt      DateTime      @default(now()) @map("created_at")
+    updatedAt      DateTime      @updatedAt @map("updated_at")
 
     @@index([subscriptionId])
     @@map("purchase")
@@ -199,16 +199,15 @@ model Purchase {
 
 model AiChat {
     id             String        @id @default(cuid())
-    organizationId String?
+    organizationId String?       @map("organization_id")
     organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    userId         String?
+    userId         String?       @map("user_id")
     user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
     title          String?
     /// [Array<{role: "user" | "assistant"; content: string;}>]
     messages       Json          @default("[]") /// @zod.custom.use(z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })))
-    createdAt      DateTime      @default(now())
-    updatedAt      DateTime      @updatedAt
+    createdAt      DateTime      @default(now()) @map("created_at")
+    updatedAt      DateTime      @updatedAt @map("updated_at")
 
     @@map("ai_chat")
 }
-
