@@ -23,6 +23,12 @@ builder:
   arch: amd64
   dockerfile: apps/web/Dockerfile
 
+env:
+  secret:
+    - DATABASE_URL
+    - BETTER_AUTH_SECRET
+    - NEXT_PUBLIC_SITE_URL
+
 ssh:
   user: app_user
   keys: [ "/Users/dhakchianandan/Documents/myhuduku/.ssh/64.23.199.33/id_ed25519" ]
