@@ -1,0 +1,28 @@
+service: huduku_compliance
+
+image: myhuduku/huduku_compliance
+
+servers:
+  web:
+    - 64.23.199.33
+
+proxy:
+  ssl: false
+  app_port: 3000
+  healthcheck:
+    path: /api/health
+
+registry:
+  server: registry.digitalocean.com/myhuduku
+  username: 
+    - KAMAL_REGISTRY_USERNAME
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  dockerfile: apps/web/Dockerfile
+
+ssh:
+  user: app_user
+  keys: [ "/Users/dhakchianandan/Documents/myhuduku/.ssh/64.23.199.33/id_ed25519" ]
