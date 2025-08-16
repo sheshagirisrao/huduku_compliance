@@ -7,7 +7,8 @@ servers:
     - 64.23.199.33
 
 proxy:
-  ssl: false
+  ssl: true
+  host: dev.myhuduku.ai
   app_port: 3000
   healthcheck:
     path: /api/health
@@ -31,4 +32,3 @@ env:
 
 ssh:
   user: app_user
-  keys: [ "/Users/dhakchianandan/Documents/myhuduku/.ssh/64.23.199.33/id_ed25519" ]
